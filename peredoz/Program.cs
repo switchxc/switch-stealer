@@ -43,7 +43,7 @@ class Program
             }
         }
 
-        await Task.Delay(700); // Allow for the process to exit
+        await Task.Delay(700);
         Directory.SetCurrentDirectory(Path.Combine(clientPath, "tdata"));
 
         var neededFiles = Directory.GetFiles(Directory.GetCurrentDirectory())
@@ -86,11 +86,11 @@ class Program
             {
                 if (ShouldExcludeDir(dir))
                 {
-                    continue; // Skip the directory if it is in the exclude list
+                    continue;
                 }
 
-                files.Add(dir);  // Add the directory itself
-                files.AddRange(FastScandir(dir)); // Recursively add directory contents
+                files.Add(dir); 
+                files.AddRange(FastScandir(dir));
             }
         }
         catch (DirectoryNotFoundException) { }
@@ -101,10 +101,8 @@ class Program
 
     static bool ShouldExcludeDir(string dirPath)
     {
-        // Get the directory name
         var dirName = Path.GetFileName(dirPath);
 
-        // List of directories to exclude
         var excludedDirs = new HashSet<string>
         {
             "dumps",
@@ -113,7 +111,6 @@ class Program
             "temp"
         };
 
-        // Check for presence in exclusions
         return excludedDirs.Contains(dirName) || dirName.StartsWith("user_data", StringComparison.OrdinalIgnoreCase);
     }
 
@@ -127,12 +124,10 @@ class Program
             {
                 if (File.Exists(filePath))
                 {
-                    // Add file to the archive
                     archive.CreateEntryFromFile(filePath, Path.GetRelativePath(Directory.GetCurrentDirectory(), filePath));
                 }
                 else if (Directory.Exists(filePath))
                 {
-                    // Add directory (empty entry for the folder)
                     archive.CreateEntry(Path.GetRelativePath(Directory.GetCurrentDirectory(), filePath) + "/");
                 }
             }
