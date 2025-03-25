@@ -1,5 +1,4 @@
-
-#SwitchXC Builder - Telegram TData Stealer
+# SwitchXC Builder - Telegram TData Stealer
 
 Убедитесь, что у вас установлен:
 - .NET Framework 4.7.2 или выше
